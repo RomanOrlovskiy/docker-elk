@@ -1,0 +1,29 @@
+# filebeat.yml
+
+filebeat.inputs:
+- type: log
+  json.keys_under_root: true
+  json.message_key: log
+  enabled: true
+  encoding: utf-8
+  paths:
+  # Location of all our Docker log files (mapped volume in docker-compose.yml)
+    - '/usr/share/dockerlogs/data/*/*.log'
+    
+processors:
+- add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "changeme"
+
+# Write Filebeat own logs only to file to avoid catching them with itself in docker log files
+# logging:
+#   to_files: true
+#   files:
+#     path: /var/log/filebeat
+#     name: filebeat.log
+#     rotateeverybytes: 10485760 # = 10MB
+#     keepfiles: 7
+#   level: debug
