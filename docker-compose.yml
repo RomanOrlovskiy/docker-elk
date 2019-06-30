@@ -2,6 +2,22 @@ version: '2'
 
 services:
 
+  petclinic:
+    build:
+      context: petclinic/
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./petclinic/config/server.xml:/opt/tomcat/conf/server.xml
+    networks:
+      - elk
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://172.17.0.1:5000"
+    depends_on:
+      - logstash
+
   elasticsearch:
     build:
       context: elasticsearch/
