@@ -19,7 +19,7 @@ services:
         ELK_VERSION: $ELK_VERSION
     command:
       - "-e"
-      - "--strict.perms=false"
+      - "--strict.perms=false" #avoids the need to restrict permissions for filebeat.yml to root user only (600)
     user: root
     volumes:
       - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml

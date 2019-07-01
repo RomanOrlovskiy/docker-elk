@@ -2,7 +2,9 @@
 
 filebeat.inputs:
 - type: log
-  json.keys_under_root: true
+  #json.keys_under_root: true #does not work due to https://github.com/elastic/beats/issues/10551
+  json.add_error_key: true
+  json.ignore_decoding_error: true
   json.message_key: log
   enabled: true
   encoding: utf-8
