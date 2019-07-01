@@ -8,15 +8,27 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./petclinic/config/server.xml:/opt/tomcat/conf/server.xml
+      - ./petclinic/config/server.xml:/opt/tomcat/conf/server.xml    
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        fluentd-async-connect: 'true'
+        fluentd-retry-wait: '1s'
+        fluentd-max-retries: '30'
+        tag: fluentd.petclinic
     networks:
       - elk
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "tcp://172.17.0.1:5000"
-    depends_on:
-      - logstash
+
+  fluentd:
+    build:
+      context: fluentd/
+    volumes:
+      - ./fluentd/config:/fluentd/etc
+    ports:
+      - "24224:24224"
+    networks:
+      - elk
 
   elasticsearch:
     build:
@@ -33,24 +45,6 @@ services:
       ELASTIC_PASSWORD: changeme
     networks:
       - elk
-
-  logstash:
-    build:
-      context: logstash/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-    ports:
-      - "5000:5000"
-      - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
 
   kibana:
     build:
