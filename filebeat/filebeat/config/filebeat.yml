@@ -21,11 +21,12 @@ output.logstash:
   hosts: ["logstash:5000"]
 
 # Write Filebeat own logs only to file to avoid catching them with itself in docker log files
-logging:
-  to_files: true
-  files:
-    path: /var/log/filebeat
-    name: filebeat.log
-    rotateeverybytes: 10485760 # = 10MB
-    keepfiles: 7
+# Does not seem to work
+# logging:
+#   to_files: true
+#   files:
+#     path: /var/log/filebeat
+#     name: filebeat.log
+#     rotateeverybytes: 10485760 # = 10MB
+#     keepfiles: 7
 #  level: debug
