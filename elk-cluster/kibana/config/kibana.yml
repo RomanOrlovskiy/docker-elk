@@ -11,17 +11,3 @@ xpack.monitoring.ui.container.elasticsearch.enabled: true
 #
 elasticsearch.username: elastic
 elasticsearch.password: changeme
-
-# sentinl:
-#   es:
-#     host: 'elasticsearch'
-#     port: 9200
-#   settings:
-#     email:
-#       active: true
-#       host: smtp.gmail.com
-#       port: 465
-#       domain: "gmail.com"
-#       ssl: true
-#       user: romanorlovskiy92@gmail.com
-#       password: wozccpogmeyukmmc

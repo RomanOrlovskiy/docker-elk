@@ -10,28 +10,10 @@ services:
       - ./petclinic/config/server.xml:/opt/tomcat/conf/server.xml
     networks:
       - elk
-
-  filebeat:
-    build:
-      context: filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    command:
-      - "-e"
-      - "--strict.perms=false" #avoids the need to restrict permissions for filebeat.yml to root user only (600)
-    user: root
-    volumes:
-      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      # needed to persist filebeat tracking data :
-      - filebeat_data:/usr/share/filebeat/data:rw
-      # needed to access all docker logs (read only) :
-      - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
-      # needed to access additional informations about containers
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    networks:
-      - elk
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://172.17.0.1:5000"
     depends_on:
       - logstash
 
@@ -64,10 +46,7 @@ services:
       - elasticsearch
 
   kibana:
-    build:
-      context: kibana/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/kibana/kibana:$ELK_VERSION
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     ports:
@@ -80,6 +59,3 @@ services:
 networks:
   elk:
     driver: bridge
-
-volumes:
-  filebeat_data:
